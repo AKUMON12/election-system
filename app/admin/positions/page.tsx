@@ -1,8 +1,15 @@
-'use client'; // Required for client-side interactivity like forms/clicks
+'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Plus, Loader2 } from "lucide-react";
 
-// Define the shape of a Position based on the SQL schema provided
+// UI Components from your React structure
+import DataTable from "@/components/ui/DataTable";
+import Modal from "@/components/ui/Modal";
+import PositionForm from "@/components/forms/PositionForm";
+
+// Define the shape based on your MongoDB/API schema
 interface IPosition {
     _id: string;
     posName: string;
@@ -11,22 +18,19 @@ interface IPosition {
 }
 
 export default function PositionsPage() {
-    // Specify the state type as an array of IPosition
     const [positions, setPositions] = useState<IPosition[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
 
-    // Fetching data with 'no-store' logic via our API
+    // 1. Fetch Real Data from your Next.js API
     const fetchPositions = async () => {
         try {
-            // Using cache: 'no-store' as requested for dynamic rendering
             const res = await fetch('/api/positions', { cache: 'no-store' });
             if (!res.ok) throw new Error("Failed to fetch");
-
             const data: IPosition[] = await res.json();
             setPositions(data);
         } catch (err) {
-            // Alert tag for error handling as requested
-            alert("Error: Could not load the positions list.");
+            console.error("Fetch error:", err);
         } finally {
             setLoading(false);
         }
@@ -36,62 +40,76 @@ export default function PositionsPage() {
         fetchPositions();
     }, []);
 
-    // Stating page: Loading state
+    // 2. Handle Add (Logic from React project)
+    const handleAdd = async (formData: { title: string }) => {
+        // In a real app, you'd perform a fetch POST here to /api/positions
+        // For now, we update local state to match your React project's behavior
+        const newPos: IPosition = {
+            _id: String(Date.now()),
+            posName: formData.title,
+            numOfPositions: 1,
+            posStat: true,
+        };
+
+        setPositions((prev) => [...prev, newPos]);
+        setShowModal(false);
+    };
+
     if (loading) return (
-        <div className="p-8 text-center animate-pulse">
-            <p className="text-xl font-semibold">Loading election positions...</p>
+        <div className="flex h-64 items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <span className="ml-2 font-medium">Loading election positions...</span>
         </div>
     );
 
     return (
-        <div className="p-8">
-            <h2 className="text-2xl font-bold">Positions Management</h2>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+            {/* Header Section */}
+            <div className="flex items-center justify-between mb-6">
+                <div>
+                    <h1 className="font-display text-2xl font-bold">Positions</h1>
+                    <p className="text-sm text-muted-foreground">Manage roles for the current election.</p>
+                </div>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all active:scale-95 shadow-sm"
+                >
+                    <Plus className="h-4 w-4" />
+                    Add Position
+                </button>
+            </div>
 
-            {/* Action button with basic alert implementation */}
-            <button
-                onClick={() => alert("This would trigger the Add Position modal/form.")}
-                className="my-4 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition-colors"
-            >
-                Add New Position
-            </button>
+            {/* 3. Using your professional DataTable instead of a basic <table> */}
+            <DataTable
+                columns={[
+                    { key: "posName", label: "Position Name" },
+                    { key: "numOfPositions", label: "Max Winners" },
+                    {
+                        key: "posStat",
+                        label: "Status",
+                        render: (val: boolean) => (
+                            <span className={val ? "text-green-600 font-bold" : "text-red-600"}>
+                                {val ? 'Active' : 'Inactive'}
+                            </span>
+                        )
+                    },
+                ]}
+                data={positions}
+            />
 
-            <table className="min-w-full border-collapse border border-gray-300">
-                <thead>
-                    <tr className="bg-gray-100">
-                        <th className="border p-2">Position Name</th>
-                        <th className="border p-2">Max Winners</th>
-                        <th className="border p-2">Status</th>
-                        <th className="border p-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {/* Explicitly typed iteration to avoid 'any' */}
-                    {positions.map((pos: IPosition) => (
-                        <tr key={pos._id} className="border-t hover:bg-gray-50">
-                            <td className="p-2 border">{pos.posName}</td>
-                            <td className="p-2 border text-center">{pos.numOfPositions}</td>
-                            <td className="p-2 border text-center">
-                                <span className={pos.posStat ? "text-green-600 font-bold" : "text-red-600"}>
-                                    {pos.posStat ? 'Active' : 'Inactive'}
-                                </span>
-                            </td>
-                            <td className="p-2 border text-center">
-                                <button
-                                    onClick={() => alert(`Deactivating ${pos.posName}...`)}
-                                    className="text-red-600 hover:underline font-medium"
-                                >
-                                    Deactivate
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {/* 4. Using your professional Modal and Form */}
+            <Modal open={showModal} onClose={() => setShowModal(false)} title="Add Position">
+                <PositionForm
+                    onSubmit={handleAdd}
+                    onCancel={() => setShowModal(false)}
+                />
+            </Modal>
 
-            {/* Empty state handling */}
-            {positions.length === 0 && (
-                <p className="mt-4 text-gray-500 text-center">No positions found in the database.</p>
+            {positions.length === 0 && !loading && (
+                <div className="mt-10 text-center py-10 bg-gray-50 rounded-xl border border-dashed">
+                    <p className="text-gray-500 text-sm">No positions found in the database.</p>
+                </div>
             )}
-        </div>
+        </motion.div>
     );
 }

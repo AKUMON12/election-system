@@ -1,26 +1,97 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* High-contrast accessible palette from your Index.css */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 217 33% 17%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 224 76% 50%; /* Adjusted for better visibility */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217 33% 25%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 22%;
+    --muted-foreground: 213 27% 80%;
+
+    --accent: 0 72% 51%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 25%;
+    --input: 217 33% 25%;
+    --ring: 224 76% 48%;
+
+    --radius: 0.75rem;
+
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+  }
+
+  /* Support for system light mode if user prefers it */
+  @media (prefers-color-scheme: light) {
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 222 47% 11%;
+      --card: 0 0% 100%;
+      --card-foreground: 222 47% 11%;
+      --muted: 210 40% 96.1%;
+      --muted-foreground: 215.4 16.3% 46.9%;
+      --border: 214.3 31.8% 91.4%;
+      --primary: 221.2 83.2% 53.3%;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Your custom React-era utilities migrated to Next.js */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:shadow-primary/10;
+  }
+
+  .btn-scale {
+    @apply transition-transform duration-200 hover:scale-105 active:scale-95;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
