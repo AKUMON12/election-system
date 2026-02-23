@@ -1,9 +1,8 @@
-'use client'; // Essential for state management in Next.js
+'use client';
 
 import { useState } from "react";
 
 interface PositionFormProps {
-    // Updated to match backend fields: posName and optionally numOfPositions
     onSubmit: (data: { posName: string; numOfPositions: number }) => void;
     onCancel: () => void;
 }
@@ -25,10 +24,14 @@ const PositionForm = ({ onSubmit, onCancel }: PositionFormProps) => {
     return (
         <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-                <label className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label
+                    htmlFor="posName"
+                    className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider"
+                >
                     Position Title
                 </label>
                 <input
+                    id="posName"
                     type="text"
                     value={posName}
                     onChange={(e) => setPosName(e.target.value)}
@@ -39,12 +42,17 @@ const PositionForm = ({ onSubmit, onCancel }: PositionFormProps) => {
             </div>
 
             <div>
-                <label className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label
+                    htmlFor="count"
+                    className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider"
+                >
                     Number of Slots
                 </label>
                 <input
+                    id="count"
                     type="number"
                     min="1"
+                    title="Enter number of slots" // Satisfies the accessibility requirement
                     value={count}
                     onChange={(e) => setCount(parseInt(e.target.value) || 1)}
                     className="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"

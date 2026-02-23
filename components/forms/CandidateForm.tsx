@@ -1,8 +1,7 @@
-'use client'; // Required for useState and form handling
+'use client';
 
 import { useState } from "react";
 
-// Updated interface to match your database schema
 interface Position {
     _id: string;
     posName: string;
@@ -36,10 +35,14 @@ const CandidateForm = ({ positions, onSubmit, onCancel }: CandidateFormProps) =>
         <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                    <label
+                        htmlFor="firstName"
+                        className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider"
+                    >
                         First Name
                     </label>
                     <input
+                        id="firstName"
                         type="text"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
@@ -49,10 +52,14 @@ const CandidateForm = ({ positions, onSubmit, onCancel }: CandidateFormProps) =>
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                    <label
+                        htmlFor="lastName"
+                        className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider"
+                    >
                         Last Name
                     </label>
                     <input
+                        id="lastName"
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
@@ -64,13 +71,18 @@ const CandidateForm = ({ positions, onSubmit, onCancel }: CandidateFormProps) =>
             </div>
 
             <div>
-                <label className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label
+                    htmlFor="positionSelect"
+                    className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider"
+                >
                     Running For Position
                 </label>
                 <select
+                    id="positionSelect" // This matches the htmlFor above
+                    title="Select a position" // This satisfies the 'axe' accessibility rule
                     value={posID}
                     onChange={(e) => setPosID(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none transition-all"
+                    className="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none transition-all cursor-pointer"
                     required
                 >
                     <option value="" disabled>Select a position</option>
@@ -83,10 +95,14 @@ const CandidateForm = ({ positions, onSubmit, onCancel }: CandidateFormProps) =>
             </div>
 
             <div>
-                <label className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label
+                    htmlFor="party"
+                    className="block text-sm font-semibold text-slate-400 mb-1.5 uppercase tracking-wider"
+                >
                     Political Party / Affiliation
                 </label>
                 <input
+                    id="party"
                     type="text"
                     value={party}
                     onChange={(e) => setParty(e.target.value)}
