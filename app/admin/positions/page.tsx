@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Plus, Loader2 } from "lucide-react";
 
-// UI Components from your React structure
-import DataTable from "@/components/ui/DataTable";
+import DataTable from "@/components/DataTable";
 import Modal from "@/components/ui/Modal";
 import PositionForm from "@/components/forms/PositionForm";
 
-// Define the shape based on your MongoDB/API schema
+// 1. FIX: Added 'id' to the interface to satisfy the DataTable requirement
 interface IPosition {
-    _id: string;
+    id: string; // Required for DataTable
+    _id: string; // Used for MongoDB
     posName: string;
     numOfPositions: number;
     posStat: boolean;
@@ -22,13 +22,19 @@ export default function PositionsPage() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
 
-    // 1. Fetch Real Data from your Next.js API
     const fetchPositions = async () => {
         try {
             const res = await fetch('/api/positions', { cache: 'no-store' });
             if (!res.ok) throw new Error("Failed to fetch");
-            const data: IPosition[] = await res.json();
-            setPositions(data);
+            const data = await res.json();
+
+            // 2. FIX: Map _id to id so the DataTable is happy
+            const formattedData = data.map((pos: any) => ({
+                ...pos,
+                id: pos._id // Satisfy the id requirement
+            }));
+
+            setPositions(formattedData);
         } catch (err) {
             console.error("Fetch error:", err);
         } finally {
@@ -40,14 +46,13 @@ export default function PositionsPage() {
         fetchPositions();
     }, []);
 
-    // 2. Handle Add (Logic from React project)
-    const handleAdd = async (formData: { title: string }) => {
-        // In a real app, you'd perform a fetch POST here to /api/positions
-        // For now, we update local state to match your React project's behavior
+    // 3. FIX: Changed parameter to match PositionForm's expected keys
+    const handleAdd = async (formData: { posName: string; numOfPositions: number }) => {
         const newPos: IPosition = {
+            id: String(Date.now()),
             _id: String(Date.now()),
-            posName: formData.title,
-            numOfPositions: 1,
+            posName: formData.posName,
+            numOfPositions: formData.numOfPositions,
             posStat: true,
         };
 
@@ -64,7 +69,6 @@ export default function PositionsPage() {
 
     return (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            {/* Header Section */}
             <div className="flex items-center justify-between mb-6">
                 <div>
                     <h1 className="font-display text-2xl font-bold">Positions</h1>
@@ -79,7 +83,6 @@ export default function PositionsPage() {
                 </button>
             </div>
 
-            {/* 3. Using your professional DataTable instead of a basic <table> */}
             <DataTable
                 columns={[
                     { key: "posName", label: "Position Name" },
@@ -87,9 +90,10 @@ export default function PositionsPage() {
                     {
                         key: "posStat",
                         label: "Status",
-                        render: (val: boolean) => (
-                            <span className={val ? "text-green-600 font-bold" : "text-red-600"}>
-                                {val ? 'Active' : 'Inactive'}
+                        // 4. FIX: render receives the 'item' (the whole row), not just the value
+                        render: (item: IPosition) => (
+                            <span className={item.posStat ? "text-green-600 font-bold" : "text-red-600"}>
+                                {item.posStat ? 'Active' : 'Inactive'}
                             </span>
                         )
                     },
@@ -97,19 +101,12 @@ export default function PositionsPage() {
                 data={positions}
             />
 
-            {/* 4. Using your professional Modal and Form */}
             <Modal open={showModal} onClose={() => setShowModal(false)} title="Add Position">
                 <PositionForm
                     onSubmit={handleAdd}
                     onCancel={() => setShowModal(false)}
                 />
             </Modal>
-
-            {positions.length === 0 && !loading && (
-                <div className="mt-10 text-center py-10 bg-gray-50 rounded-xl border border-dashed">
-                    <p className="text-gray-500 text-sm">No positions found in the database.</p>
-                </div>
-            )}
         </motion.div>
     );
 }

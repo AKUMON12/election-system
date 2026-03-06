@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 
 // Updated paths to use the root-level folders (@ alias)
 import { mockCandidates, mockPositions, type Candidate } from "@/data/mockData";
-import DataTable from "@/components/ui/DataTable";
+import DataTable from "@/components/DataTable";
 import Modal from "@/components/ui/Modal";
 import CandidateForm from "@/components/forms/CandidateForm";
 
@@ -14,13 +14,16 @@ export default function CandidatesPage() {
     const [candidates, setCandidates] = useState<Candidate[]>(mockCandidates);
     const [showModal, setShowModal] = useState(false);
 
-    const handleAdd = (data: { name: string; position: string; party: string }) => {
+    const handleAdd = (data: { candFName: string; candLName: string; posID: string; party: string }) => {
+        const position = mockPositions.find((p) => p.id === data.posID);
         setCandidates((prev) => [
             ...prev,
             {
                 id: String(Date.now()),
+                name: `${data.candFName} ${data.candLName}`,
+                position: position?.title || data.posID,
+                party: data.party,
                 votes: 0,
-                ...data
             },
         ]);
         setShowModal(false);
@@ -59,7 +62,7 @@ export default function CandidatesPage() {
                 title="Add Candidate"
             >
                 <CandidateForm
-                    positions={mockPositions.map((p) => p.title)}
+                    positions={mockPositions}
                     onSubmit={handleAdd}
                     onCancel={() => setShowModal(false)}
                 />

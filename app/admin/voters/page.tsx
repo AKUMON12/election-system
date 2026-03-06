@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Plus, Loader2 } from "lucide-react";
 
 // Updated paths to the root-level shared folders
-import DataTable from "@/components/ui/DataTable";
+import DataTable from "@/components/DataTable";
 import Modal from "@/components/ui/Modal";
 import VoterForm from "@/components/forms/VoterForm";
 import { mockVoters, type Voter } from "@/data/mockData";

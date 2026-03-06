@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 interface Position {
-    _id: string;
-    posName: string;
+    id: string;
+    title: string;
 }
 
 interface CandidateFormProps {
@@ -16,7 +16,7 @@ interface CandidateFormProps {
 const CandidateForm = ({ positions, onSubmit, onCancel }: CandidateFormProps) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [posID, setPosID] = useState(positions[0]?._id || "");
+    const [posID, setPosID] = useState(positions[0]?.id || "");
     const [party, setParty] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -87,8 +87,8 @@ const CandidateForm = ({ positions, onSubmit, onCancel }: CandidateFormProps) =>
                 >
                     <option value="" disabled>Select a position</option>
                     {positions.map((p) => (
-                        <option key={p._id} value={p._id} className="bg-slate-900">
-                            {p.posName}
+                        <option key={p.id} value={p.id} className="bg-slate-900">
+                            {p.title}
                         </option>
                     ))}
                 </select>

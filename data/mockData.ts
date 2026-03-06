@@ -1,78 +1,80 @@
-"use client";
+// Type definitions
+export type Candidate = {
+  id: string;
+  name: string;
+  position: string;
+  party: string;
+  votes: number;
+};
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Plus } from "lucide-react";
+export type Position = {
+  id: string;
+  title: string;
+};
 
-// Updated imports to be safer
-import { mockCandidates, mockPositions, type Candidate, type Position } from "@/data/mockData";
-import DataTable from "@/components/ui/DataTable";
-import Modal from "@/components/ui/Modal";
-import CandidateForm from "@/components/forms/CandidateForm";
+export type Voter = {
+  id: string;
+  name: string;
+  email: string;
+  hasVoted: boolean;
+};
 
-export default function CandidatesPage() {
-    const [candidates, setCandidates] = useState<Candidate[]>(mockCandidates);
-    const [showModal, setShowModal] = useState(false);
+// Mock data
+export const mockPositions: Position[] = [
+  { id: "1", title: "President" },
+  { id: "2", title: "Vice President" },
+  { id: "3", title: "Secretary" },
+  { id: "4", title: "Treasurer" },
+];
 
-    const handleAdd = (data: {
-        candFName: string;
-        candLName: string;
-        posID: string;
-        party: string;
-    }) => {
-        const newCandidate: Candidate = {
-            id: String(Date.now()),
-            name: `${data.candFName} ${data.candLName}`,
-            position: data.posID,
-            party: data.party,
-            votes: 0,
-        };
+export const mockCandidates: Candidate[] = [
+  {
+    id: "1",
+    name: "John Smith",
+    position: "President",
+    party: "Democratic",
+    votes: 150,
+  },
+  {
+    id: "2",
+    name: "Sarah Johnson",
+    position: "President",
+    party: "Republican",
+    votes: 140,
+  },
+  {
+    id: "3",
+    name: "Mike Davis",
+    position: "Vice President",
+    party: "Democratic",
+    votes: 145,
+  },
+  {
+    id: "4",
+    name: "Emily Wilson",
+    position: "Vice President",
+    party: "Republican",
+    votes: 135,
+  },
+];
 
-        setCandidates((prev) => [...prev, newCandidate]);
-        setShowModal(false);
-    };
-
-    return (
-        <motion.div
-            initial= {{ opacity: 0, y: 10 }
-}
-animate = {{ opacity: 1, y: 0 }}
-transition = {{ duration: 0.3 }}
-className = "p-6"
-    >
-    <div className="flex items-center justify-between mb-6" >
-        <h1 className="text-2xl font-bold tracking-tight" > Candidates </h1>
-            < button
-onClick = {() => setShowModal(true)}
-className = "inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-sm font-medium transition-transform active:scale-95"
-    >
-    <Plus className="h-4 w-4" />
-        Add Candidate
-            </button>
-            </div>
-
-            < DataTable
-columns = {
-    [
-    { key: "name", label: "Name" },
-    { key: "position", label: "Position" },
-    { key: "party", label: "Party" },
-    { key: "votes", label: "Votes" },
-                ]}
-data = { candidates }
-    />
-
-    <Modal
-                open={ showModal }
-onClose = {() => setShowModal(false)}
-title = "Add Candidate"
-    >
-    <CandidateForm
-                    positions={ mockPositions.map((p: Position) => p.title) }
-onSubmit = { handleAdd }
-onCancel = {() => setShowModal(false)}
-                />
-    </Modal>
-    </motion.div>
-    );
-}
+export const mockVoters: Voter[] = [
+  {
+    id: "1",
+    name: "Alice Brown",
+    email: "alice@example.com",
+    hasVoted: true,
+  },
+  {
+    id: "2",
+    name: "Bob Martin",
+    email: "bob@example.com",
+    hasVoted: false,
+  },
+  {
+    id: "3",
+    name: "Carol White",
+    email: "carol@example.com",
+    hasVoted: true,
+  },
+];
